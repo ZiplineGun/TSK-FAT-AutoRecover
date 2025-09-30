@@ -1,5 +1,5 @@
 # TSK-FAT-AutoRecover
-A wrapper tool for FAT extraction and recovery using Sleuth Kit.
+A wrapper tool for FAT extraction and recovery using [Sleuth Kit](https://www.sleuthkit.org/).
 
 ## Features
 - Scans all sectors in a disk image to detect FAT BPBs.
