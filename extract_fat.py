@@ -1,4 +1,3 @@
-
 import argparse
 import struct
 import os
@@ -439,7 +438,8 @@ def extract_fat(input, output_dir, exe_name, fat_info, enable_recover_files):
     command.append(exe_name)
     if enable_recover_files: command.append("-e")
     command.extend(["-f", fat_info["fat_type"]])
-    command.extend(["-o", str(fat_info["bpb_off"] // bytes_per_sector)])
+    command.extend(["-o", str(fat_info["bpb_off"] // bytes_per_sector)]) # sector offset
+    command.extend(["-b", str(bytes_per_sector)])
     command.append(input)
     command.append(output_dir)
 
