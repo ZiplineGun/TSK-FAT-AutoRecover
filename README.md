@@ -1,10 +1,11 @@
 # TSK-FAT-AutoRecover
-A wrapper tool for FAT extraction and recovery using [Sleuth Kit](https://www.sleuthkit.org/).
+A wrapper tool for FAT extraction and recovery using [The Sleuth Kit](https://www.sleuthkit.org/).
+> The Sleuth Kit® is a collection of command line tools and a C library that allows you to analyze disk images and recover files from them.
 
 ## Features
 - Scans all sectors in a disk image to detect FAT BPBs.
-- Then passes the detected offsets to `tsk_recover`, a file system recovery tool included in the open-source Sleuth Kit, to extract files.
-- Supported file systems: FAT12/16/32, exFAT
+- Then passes the detected offsets to `tsk_recover`, a file system recovery tool included in the The Sleuth Kit, to extract files.
+- Supported filesystems: FAT12/16/32, exFAT
 - To better detect non-standard FAT BPBs:
   - The initial 3-byte bootstrap code is ignored during detection.
   - The tool prioritizes the `BS_FilSysType` field over `CountOfClusters` when determining the FAT type.
@@ -15,7 +16,7 @@ A wrapper tool for FAT extraction and recovery using [Sleuth Kit](https://www.sl
 ## Usage Examples
 Help: `python extract_fat.py -h`
 
-- Extract filesystems from an image file:
+- Extract and recover files from an image file:
   - `python extract_fat.py image.bin`
 - Carve out the region from one FAT BPB to the next and save it as a separate file
 (useful when using other FAT extraction tools):
@@ -26,7 +27,7 @@ Help: `python extract_fat.py -h`
 ## Installation
 
 ### Windows
-Download the appropriate `sleuthkit (***-win32.zip)` from:
+Download the appropriate Sleuth Kit (`***-win32.zip`) from:
 
 https://github.com/sleuthkit/sleuthkit/releases
 
@@ -39,4 +40,4 @@ Alternatively, if the path is included in your system's `PATH` environment varia
 Install Sleuth Kit with:
 `sudo apt install sleuthkit`
 
-No changes to extract_fat.ini are required.
+No changes to `extract_fat.ini` are required.
