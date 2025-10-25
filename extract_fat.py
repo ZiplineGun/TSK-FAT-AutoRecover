@@ -84,6 +84,13 @@ def get_fat_infos(input_path, bpb_offs):
         return fat_infos
 
 
+def resolve_path(path, base_dir):
+    if os.path.isabs(path):
+        return os.path.normpath(path)
+    else:
+        return os.path.normpath(os.path.join(base_dir, path))
+
+
 def get_exe_path(config_path):
     # Windows
     if os.name == "nt":
@@ -92,7 +99,8 @@ def get_exe_path(config_path):
 
         exe_from_ini = None
         if config.has_section("settings") and config.has_option("settings", "sleuthkit_path"):
-            sleuthkit_path = config["settings"]["sleuthkit_path"]
+            sleuthkit_path = resolve_path(config["settings"]["sleuthkit_path"], os.path.dirname(config_path))
+
             if sleuthkit_path:
                 candidate = os.path.join(sleuthkit_path, "tsk_recover.exe")
                 if os.path.isfile(candidate):
@@ -469,6 +477,6 @@ if __name__ == "__main__":
 
     output_dir = os.path.join(os.path.dirname(args.input), f"{os.path.splitext(os.path.basename(args.input))[0]}_FAT") if args.output is None else args.output
 
-    config_path = os.path.join(os.path.dirname(sys.argv[0]), "extract_fat.ini")
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "extract_fat.ini")
 
     main(args.input, output_dir, args.check_fat_signature, args.carve_fat, args.extract_fat, args.recover_files, args.detection_step, config_path)
