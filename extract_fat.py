@@ -10,14 +10,18 @@ import mmap
 def main(input_path, output_dir, enable_check_fat_signature, enable_carve_fat, enable_extract_fat, enable_recover_files, detection_step, config_path):
     print("Start detecting and analyzing FAT BPB.")
     bpb_offs = detect_bpb_offset_mmap(input_path, enable_check_fat_signature, detection_step)
+    if len(bpb_offs) == 0:
+        print("FAT BPB was not detected.")
+        sys.exit(0)
+    
     fat_infos = get_fat_infos(input_path, bpb_offs)
     fat_infos = remove_backup_sector(fat_infos)
 
-    if enable_carve_fat and len(fat_infos) > 0:
+    if enable_carve_fat:
         print("\nStart carving FAT.")
         carve_fat(input_path, fat_infos, output_dir)
     
-    if enable_extract_fat and len(fat_infos) > 0:
+    if enable_extract_fat:
         print("\nStart extracting FAT.")
         exe_name = get_exe_path(config_path)
         os.makedirs(output_dir, exist_ok=True)
@@ -80,13 +84,6 @@ def get_fat_infos(input_path, bpb_offs):
         return fat_infos
 
 
-def resolve_path(path, base_dir):
-    if os.path.isabs(path):
-        return os.path.normpath(path)
-    else:
-        return os.path.normpath(os.path.join(base_dir, path))
-
-
 def get_exe_path(config_path):
     # Windows
     if os.name == "nt":
@@ -95,8 +92,7 @@ def get_exe_path(config_path):
 
         exe_from_ini = None
         if config.has_section("settings") and config.has_option("settings", "sleuthkit_path"):
-            sleuthkit_path = resolve_path(config["settings"]["sleuthkit_path"], os.path.dirname(config_path))
-
+            sleuthkit_path = config["settings"]["sleuthkit_path"]
             if sleuthkit_path:
                 candidate = os.path.join(sleuthkit_path, "tsk_recover.exe")
                 if os.path.isfile(candidate):
@@ -473,6 +469,6 @@ if __name__ == "__main__":
 
     output_dir = os.path.join(os.path.dirname(args.input), f"{os.path.splitext(os.path.basename(args.input))[0]}_FAT") if args.output is None else args.output
 
-    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "extract_fat.ini")
+    config_path = os.path.join(os.path.dirname(sys.argv[0]), "extract_fat.ini")
 
     main(args.input, output_dir, args.check_fat_signature, args.carve_fat, args.extract_fat, args.recover_files, args.detection_step, config_path)
